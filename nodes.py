@@ -22,6 +22,11 @@ try:
 except Exception:
     Qwen35ChatHandler = None
 
+try:
+    from llama_cpp.llama_chat_format import Qwen36ChatHandler
+except Exception:
+    Qwen36ChatHandler = None
+
 class AnyType(str):
     def __ne__(self, __value: object) -> bool:
         return False
@@ -176,6 +181,27 @@ class _QwenStorage:
                     )
                 except TypeError:
                     chat_handler = Qwen35ChatHandler(clip_model_path=mmproj_path, enable_thinking=think, verbose=False)
+            elif family == "Qwen3.6-VL":
+                if Qwen36ChatHandler is None:
+                    # 如果没有专门的 Qwen36ChatHandler，尝试使用 Qwen35ChatHandler 作为兼容方案
+                    if Qwen35ChatHandler is not None:
+                        print("[QwenVL] 未找到 Qwen36ChatHandler，将尝试使用 Qwen35ChatHandler 兼容模式。")
+                        try:
+                            chat_handler = Qwen35ChatHandler(clip_model_path=mmproj_path, enable_thinking=think, add_vision_id=True, verbose=False)
+                        except Exception:
+                            chat_handler = Qwen35ChatHandler(clip_model_path=mmproj_path, enable_thinking=think, verbose=False)
+                    else:
+                        raise RuntimeError("当前 llama-cpp-python 不支持 Qwen36ChatHandler，请更新 llama-cpp-python。")
+                else:
+                    try:
+                        chat_handler = Qwen36ChatHandler(
+                            clip_model_path=mmproj_path,
+                            enable_thinking=think,
+                            add_vision_id=True,
+                            verbose=False,
+                        )
+                    except TypeError:
+                        chat_handler = Qwen36ChatHandler(clip_model_path=mmproj_path, enable_thinking=think, verbose=False)
             else:
                 raise ValueError(f"未知模型家族：{family}")
         else:
@@ -210,7 +236,7 @@ class QwenVL模型加载器:
             
         return {
             "required": {
-                "模型家族": (["Qwen3-VL", "Qwen3.5-VL"], {"default": "Qwen3.5-VL"}),
+                "模型家族": (["Qwen3-VL", "Qwen3.5-VL", "Qwen3.6-VL"], {"default": "Qwen3.6-VL"}),
                 "主模型": (model_list, {"tooltip": "主模型文件（建议 .gguf）放到 ComfyUI/models/LLM/"}),
                 "视觉投影mmproj": (mmproj_list, {"default": "无", "tooltip": "多模态需要 mmproj；纯文本可选“无”。"}),
                 "启用思考": ("BOOLEAN", {"default": True, "tooltip": "Qwen3.5: enable_thinking；Qwen3: force_reasoning/use_think_prompt（取决于版本）。"}),

@@ -1,6 +1,34 @@
-# ComfyUI-YUAN_ALL 整合包
+# ComfyUI-YUAN 整合包
+Bernini功能是 `ComfyUI-RH-Bernini` 的增强复刻版，集成了 `ComfyUI-WanAnimatePlus` 的多参考图（Multi-Reference）功能，并保留了 `ComfyUI-YUAN` 的 Qwen-VL 推理节点。
 
-整合了 QwenVL 图像推理和 YUAN_TXT 文本处理两大功能。
+## 主要功能
+
+1.  **Bernini Conditioning (Plus)**:
+    *   支持多张参考图输入（Multi-Reference Images）。
+    *   自动任务推理（t2v, v2v, rv2v, r2v 等）。
+    *   集成了 Bernini 核心补丁，支持 Wan2.2-A14B 模型。
+2.  **Bernini Prompt Enhancer**:
+    *   官方 Bernini 提示词增强逻辑，支持多种任务类型。
+    *   输出系统提示词和用户提示词，可对接外部 LLM 节点。
+3.  **Qwen-VL 集成**:
+    *   保留了原有的 Qwen-VL 模型加载与推理节点。
+    *   支持图片、视频抽帧、纯文本等多种推理模式。
+
+## 安装方法
+
+1.  将本项目文件夹放入 `ComfyUI/custom_nodes/` 目录下。
+2.  安装依赖：
+    ```bash
+    pip install -r requirements.txt
+    ```
+3.  重启 ComfyUI。
+
+## 节点说明
+
+*   **Bernini Conditioning (Plus)**: 用于构建 Bernini 任务的条件。
+*   **Qwen VL 图像推理**: 可用于辅助生成 Bernini 所需的增强提示词。
+
+
 
 ## 插件列表
 
@@ -80,6 +108,8 @@
 
 ---
 
-## 法律声明
+## 鸣谢
 
-本项目为"洁净室"开发模式，通过分析功能表现从零编写代码，不包含任何原插件的受版权保护的源代码或二进制文件。
+*   [ComfyUI-RH-Bernini](https://github.com/RH-RunningHub/ComfyUI-RH-Bernini)
+*   [ComfyUI-WanAnimatePlus](https://github.com/wuwukaka/ComfyUI-WanAnimatePlus)
+整合了 QwenVL 图像推理和 YUAN_TXT 文本处理两大功能。
